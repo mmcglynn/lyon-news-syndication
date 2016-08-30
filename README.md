@@ -3,6 +3,7 @@ A WordPress plugin for consuming REST API.
 
 **Stored in the context of the Widget** 
 - API query
+- Date/time of last post matching criteria
 - Last edit
 - Last edit's user ID
 - Categories*
@@ -11,7 +12,6 @@ A WordPress plugin for consuming REST API.
 - Total tags
 
 **Stored in the transient**
-- Date/time of last post matching criteria
 - Full markup of currently served content
 
 *Pull all from API and count them:
