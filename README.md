@@ -1,7 +1,7 @@
 # lyon-news-syndication
 A WordPress plugin for consuming REST API.
 
-Stored in the context of the Widget 
+**Stored in the context of the Widget** 
 - API query
 - Last edit
 - Last edit's user ID
@@ -10,11 +10,11 @@ Stored in the context of the Widget
 - Tags*
 - Total tags
 
-Stored in the transient
+**Stored in the transient**
 - Date/time of last post matching criteria
 - Full markup of currently served content
 
-*Pull all and count. 
+*Pull all from API and count them:
 - If greater or less than than saved total, regenerate list. 
 - If equal to compare to array with the IDs. 
 - If the same, use what is saved. 
