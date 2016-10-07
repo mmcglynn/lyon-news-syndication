@@ -1,15 +1,22 @@
 <?php
 function ls_sample_shortcode() {
-    return showPosts(23);
+    return showPosts(12);
 }
 
 add_shortcode('ls_news','ls_sample_shortcode');
 
 // Define constants
-define(DOMAIN, 'http://technicalwhining.com/');
+define(API_DOMAIN, 'http://technicalwhining.com/');
 define(API_VERSION, '/wp-json/wp/v2/');
 
 function showPosts($id = 0) {
+
+	// REST API request
+	$response = wp_remote_get(API_DOMAIN . API_VERSION . 'posts/?filter[cat]=' . $id . '&status=publish');
+
+	$response_code = wp_remote_retrieve_response_code( $response );
+
+	//echo $response_code;
 
 	// Start timer
 	$time_start = microtime(true);
@@ -17,43 +24,40 @@ function showPosts($id = 0) {
 	$image_path =
 	$posts_string = '';
 
-	try {
+	$posts_string .= '<section class="syndicated_content">';
 
-		//$json = file_get_contents($domain . $version . 'posts/?filter[category_name]=hardware&status=publish');
-
-		$response = wp_remote_get(DOMAIN . API_VERSION . 'posts/?filter[cat]=' . $id . '&status=publish');
+	if( $response_code == 200 ) {
 
 		// Why can't wp_remote_retrieve_body() be assigned to a variable?
 		$posts = json_decode(wp_remote_retrieve_body($response), true);
-	}
-	catch (Exception $e)
-	{
-		echo 'Exception caught: ' . $e->getMessage() . "\n";
-	}
 
-	echo '<p>There are ' . count($posts) . ' posts that match.</p>';
+		if (count($posts) > 0) {
 
-	$posts_string .= '<section class="syndicated_content">';
+			$posts_string .= '<p>There are ' . count($posts) . ' posts that match this query.</p>';
 
-	if (count($posts) > 0) {
+			foreach ($posts as $post) {
 
-		foreach ($posts as $post) {
+				// Debug
+				//echo $post['featured_media'];
 
-			/* */
-			if ($post['featured_media'] > 0){
+				$posts_string .= '<h3>' . $post['title']['rendered'] . '</h3>';
 
-				echo $post['featured_media'];
-				//$image_path = getFeaturedImage($post['featured_media']);
-				//$posts_string .= '<img src="' . $image_path . '" />';
+				if ($post['featured_media'] > 0){
+					$posts_string .= getFeaturedImage($post['featured_media']);
+				}
+
+				$posts_string .= $post['excerpt']['rendered'];
+
 			}
 
-
-			$posts_string .= '<h3>' . $post['title']['rendered'] . '</h3>';
-			$posts_string .= $post['excerpt']['rendered'];
-
+		}  else {
+			$posts_string .= 'There is no data to display';
 		}
-	}  else {
-		$posts_string .= 'There is no data to display';
+
+	} else {
+
+		echo '<p>Sorry the request failed with HTTP response code: ' . $response_code . '</p>';
+
 	}
 
 	$posts_string .= '</section>';
@@ -72,32 +76,28 @@ function showPosts($id = 0) {
 
 function getFeaturedImage($id = 0, $size = 'thumbnail') {
 
-	$attachment	=
-	$source 	=
-	$height 	=
-	$width 		= '';
+	// REST API request
+	$response = wp_remote_get(API_DOMAIN . API_VERSION . 'media/?include=' . $id);
 
-	try {
+	$response_code = wp_remote_retrieve_response_code( $response );
 
-		$response = wp_remote_get(DOMAIN . API_VERSION . 'media/?include=' . $id);
+	$attachment	= $source = $height = $width = '';
+
+	if( $response_code == 200 ) {
 
 		// Why can't wp_remote_retrieve_body() be assigned to a variable?
 		$image = json_decode(wp_remote_retrieve_body($response), true);
 
+		// Get the node that matches the size
+		$node = $image[0]['media_details']['sizes'][$size];
+
+		$src 	= $node['source_url'];
+		$height = $node['height'];
+		$width 	= $node['width'];
+
+		$attachment = '<img src="' . $src . '" width="' . $width . '" height="' . $height . '" />';
+
 	}
-	catch (Exception $e)
-	{
-		echo 'Exception caught: ' . $e->getMessage() . "\n";
-	}
-
-	// Get the node that matches the size
-	$node = $image[0]['media_details']['sizes'][$size];
-
-	$src 	= $node['source_url'];
-	$height = $node['height'];
-	$width 	= $node['width'];
-
-	$attachment = '<img src="' . $src . '" width="' . $width . '" height="' . $height . '" />';
 
 	return $attachment;
 }
