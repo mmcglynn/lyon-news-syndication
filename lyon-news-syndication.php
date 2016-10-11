@@ -54,8 +54,48 @@ class LS_News_Widget extends WP_Widget {
 	 *
 	 * @param array $instance The widget options
 	 */
-	public function form( $instance ) {
+	//public function form( $instance ) {
 		// outputs the options form on admin
+	//}
+
+
+	/**
+	 * Back-end widget form.
+	 *
+	 * @see WP_Widget::form()
+	 *
+	 * @param array $instance Previously saved values from database.
+	 */
+	public function form( $instance ) {
+		$title = ! empty( $instance['title'] ) ? $instance['title'] : __( 'New title', 'text_domain' );
+		?>
+		<p>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php _e( esc_attr( 'Title:' ) ); ?></label>
+			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>">
+		</p>
+		<label for="category">Category</label>
+		<select class="category_list"></select>
+		<?php buildCategories(); ?>
+		<label for="display_type">Display Type</label>
+		<select id="display_type">
+			<option value="1">Title only</option>
+			<option value="2">Excerpt</option>
+			<option value="3">Excerpt w/ thumbnail</option>
+			<option value="3">Full post</option>
+		</select>
+		<label for="total_results">Number of results</label>
+		<select id="total_results">
+			<option value="1">1</option>
+			<option value="3">3</option>
+			<option value="5">5</option>
+			<option value="10">10</option>
+		</select>
+
+		<button>Preview Selection</button>
+		<fieldset>
+			<input type="submit" title="Submit" value="SUBMIT" />
+		</fieldset>
+		<?php
 	}
 
 	/**
@@ -82,4 +122,42 @@ function ls_admin_enqueue_scripts() {
 }
 
 
+function buildCategories() {
 
+	// REST API request
+	// 50 is the current max, and assuming the list is flat
+	$response = wp_remote_get(API_DOMAIN . API_VERSION . 'categories/?per_page=50&hide_empty=1');
+
+	echo $response;
+
+	// Get HTTP response code
+	$response_code = wp_remote_retrieve_response_code( $response );
+
+
+
+	$categories_string = 'Category display failed with HTTP response code: ' . $response_code;
+
+	if ( $response_code == 200 ) {
+
+		// Why can't wp_remote_retrieve_body() be assigned to a variable?
+		$categories = json_decode(wp_remote_retrieve_body($response), true);
+
+		if (count($categories) > 0) {
+
+			// Debug
+			// echo $categories[0]['id'];
+			// count($categories);
+
+			$categories_string = '<select><option value="">-- Select One --</option>';
+
+			foreach ($categories as $cat) {
+				$categories_string .= '<option value="' . $cat['id'] . '">' . $cat['name'] . ' (' . $cat['count'] . ')' . '</option>';
+			}
+
+			$categories_string .= '</select>';
+
+		}
+	}
+
+	echo $categories_string;
+}
