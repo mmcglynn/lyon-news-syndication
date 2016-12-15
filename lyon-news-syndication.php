@@ -34,7 +34,7 @@ class LS_News_Widget extends WP_Widget {
 	public function __construct() {
 		$widget_ops = array( 
 			'classname' => 'ls_news_widget',
-			'description' => 'My Widget is awesome',
+			'description' => 'Configure and display syndicated content.',
 		);
 		parent::__construct( 'ls_news__widget', 'Lyon News', $widget_ops );
 	}
@@ -73,28 +73,36 @@ class LS_News_Widget extends WP_Widget {
 			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php _e( esc_attr( 'Title:' ) ); ?></label>
 			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>">
 		</p>
-		<label for="category">Category</label>
-		<select class="category_list"></select>
-		<?php buildCategories(); ?>
-		<label for="display_type">Display Type</label>
-		<select id="display_type">
-			<option value="1">Title only</option>
-			<option value="2">Excerpt</option>
-			<option value="3">Excerpt w/ thumbnail</option>
-			<option value="3">Full post</option>
-		</select>
-		<label for="total_results">Number of results</label>
-		<select id="total_results">
-			<option value="1">1</option>
-			<option value="3">3</option>
-			<option value="5">5</option>
-			<option value="10">10</option>
-		</select>
-
-		<button>Preview Selection</button>
-		<fieldset>
+		<p>
+			<label for="category">Category</label>
+			<!-- This really needs to be populated by Ajaz -->
+			<!-- <select class="category_list"></select> -->
+		<?php buildCategories() ?>
+		</p>
+		<p>
+			<label for="display_type">Display Type</label>
+			<select id="display_type">
+				<option value="1">Title only</option>
+				<option value="2">Excerpt</option>
+				<option value="3">Excerpt w/ thumbnail</option>
+				<option value="3">Full post</option>
+			</select>
+		</p>
+		<p>
+			<label for="total_results">Number of results</label>
+			<select id="total_results">
+				<option value="1">1</option>
+				<option value="3">3</option>
+				<option value="5">5</option>
+				<option value="10">10</option>
+			</select>
+		</p>
+		<p>
+			<button>Preview Selection</button>
+		</p>
+		<p>
 			<input type="submit" title="Submit" value="SUBMIT" />
-		</fieldset>
+		</p>
 		<?php
 	}
 
@@ -132,8 +140,6 @@ function buildCategories() {
 
 	// Get HTTP response code
 	$response_code = wp_remote_retrieve_response_code( $response );
-
-
 
 	$categories_string = 'Category display failed with HTTP response code: ' . $response_code;
 
