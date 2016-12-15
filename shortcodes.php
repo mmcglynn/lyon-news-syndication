@@ -1,32 +1,77 @@
 <?php
 function ls_sample_shortcode() {
-    return showPosts(12);
+    return syndicated_content();
+	//return showPosts(12);
 }
 
 add_shortcode('ls_news','ls_sample_shortcode');
 
-// Define constants
-define(API_DOMAIN, 'http://technicalwhining.com/');
-define(API_VERSION, '/wp-json/wp/v2/');
 
+// Testing Transients
+function syndicated_content() {
+
+	// Do we have this information in our transients already?
+	$transient = get_transient( 'syndicated_content' );
+
+	// Yep!  Just return it and we're done.
+	if( ! empty( $transient ) ) {
+
+		// The function will return here every time after the first time it is run, until the transient expires.
+		return $transient;
+
+		// Nope!  We gotta make a call.
+	} else {
+
+		// We got this url from the documentation for the remote API.
+		//$url = 'https://api.example.com/v4/subscribers';
+
+		// We are structuring these args based on the API docs as well.
+		//$args = array(
+		//	'headers' => array(
+		//		'token' => 'example_token'
+		//	),
+		//);
+
+		// Call the API.
+		//$out = wp_remote_get( $url, $args );
+
+		$out = showPosts(12);
+
+		// Save the API response so we don't have to call again until tomorrow.
+		set_transient( 'css_t_subscribers', $out, DAY_IN_SECONDS );
+
+		// Return the list of subscribers.  The function will return here the first time it is run, and then once again, each time the transient expires.
+		return $out;
+
+	}
+
+}
+
+
+
+/**
+ * Show the posts
+ *
+ * @param int $id The category ID
+ */
 function showPosts($id = 0) {
 
 	// REST API request
 	$response = wp_remote_get(API_DOMAIN . API_VERSION . 'posts/?filter[cat]=' . $id . '&status=publish');
 
+	// Get HTTP response code
 	$response_code = wp_remote_retrieve_response_code( $response );
-
-	//echo $response_code;
 
 	// Start timer
 	$time_start = microtime(true);
 
-	$image_path =
-	$posts_string = '';
+	$image_path = '';
 
-	$posts_string .= '<section class="syndicated_content">';
+	$posts_string = '<p>Sorry the request failed with HTTP response code: ' . $response_code . '</p>';
 
 	if( $response_code == 200 ) {
+
+		$posts_string = '<section class="syndicated_content">';
 
 		// Why can't wp_remote_retrieve_body() be assigned to a variable?
 		$posts = json_decode(wp_remote_retrieve_body($response), true);
@@ -50,17 +95,10 @@ function showPosts($id = 0) {
 
 			}
 
-		}  else {
-			$posts_string .= 'There is no data to display';
 		}
 
-	} else {
-
-		echo '<p>Sorry the request failed with HTTP response code: ' . $response_code . '</p>';
-
+		$posts_string .= '</section>';
 	}
-
-	$posts_string .= '</section>';
 
 	// End timer
 	$time_end = microtime(true);
