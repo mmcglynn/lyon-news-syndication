@@ -3,7 +3,7 @@ A WordPress plugin for consuming REST API.
 
 ## Data Storage
 
-## Stored in the context of the instance (CPT?)
+### Stored in the context of the instance (CPT?)
 1. API constants
 2. Last Edit (if not available anywhere else)
 3. Last edit's user ID (if not available anywhere else)
@@ -12,7 +12,7 @@ A WordPress plugin for consuming REST API.
 6. total records
 7. thumbnail size
 
-## Optional
+### Optional
 - Categories\*
 - Total categories
 - Tags\*
@@ -24,7 +24,7 @@ A WordPress plugin for consuming REST API.
 - If the same, use what is saved. 
 - If different, regenerate list.
 
-## Stored in Transient
+### Stored in Transient
 1. HTML string
  1. Full markup of currently served content
  2. NOTE: The name of the transient is per configuration, and has to be named as such to avoid collisions.
