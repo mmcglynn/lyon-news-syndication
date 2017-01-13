@@ -1,50 +1,37 @@
 # lyon-news-syndication
 A WordPress plugin for consuming REST API.
 
-**Stored in the context of the Widget** 
-- API query
-- Date/time of last post matching criteria
-- Last edit
-- Last edit's user ID
-- Categories*
+## Data Storage
+
+## Stored in the context of the instance (CPT?)
+1. API constants
+2. Last Edit (if not available anywhere else)
+3. Last edit's user ID (if not available anywhere else)
+4. Date/time of latest post matching criteria
+5. category (multiples?)
+6. total records
+7. thumbnail size
+
+## Optional
+- Categories\*
 - Total categories
-- Tags*
+- Tags\*
 - Total tags
 
-**Stored in the transient**
-- Full markup of currently served content
-
-*Pull all from API and count them:
+\*Pull all from API and count them:
 - If greater or less than than saved total, regenerate list. 
 - If equal to compare to array with the IDs. 
 - If the same, use what is saved. 
 - If different, regenerate list.
 
-
-## NOTES
-
-The name of the transient is per configuration, and has to be named as such to avoid collisions.
-
-### Data
-
-**Stored in ??**
-
-1. time stamp (if not available anywhere else)
-2. category (multiples?)
-3. total records
-4. thumbnail size
-
-**Stored in Transient**
-
+## Stored in Transient
 1. HTML string
+ 1. Full markup of currently served content
+ 2. NOTE: The name of the transient is per configuration, and has to be named as such to avoid collisions.
 
-**Plugin**
+## Logic
 
-1. Date of latest post
-
-### Logic
-
-**On page load**
+### On page load
 
 1. Get date of latest post
     1. Date matches database
