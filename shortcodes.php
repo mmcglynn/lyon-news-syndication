@@ -1,7 +1,7 @@
 <?php
 function ls_sample_shortcode() {
-    return syndicated_content();
-	//return showPosts(12);
+    //return syndicated_content();
+	return showPosts();
 }
 
 add_shortcode('ls_news','ls_sample_shortcode');
@@ -47,14 +47,16 @@ function syndicated_content() {
 
 }
 
-
+// Not tested with 4.7
+define("API_DOMAIN", "http://technicalwhining.com");
+define("API_VERSION", "/wp-json/wp/v2/");
 
 /**
  * Show the posts
  *
  * @param int $id The category ID
  */
-function showPosts($id = 0) {
+function showPosts($id = 12) {
 
 	// REST API request
 	$response = wp_remote_get(API_DOMAIN . API_VERSION . 'posts/?filter[cat]=' . $id . '&status=publish');
