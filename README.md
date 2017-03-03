@@ -33,15 +33,21 @@ A WordPress plugin for consuming REST API.
 
 ### On page load
 
-1. Get date of latest post
-    1. Date matches database
+1. GET DATE of latest post
+    1. DATE matches saved DATE in stored instance configuration
         1. Transient exists
             1. Display transient
+            2. END
         2. Transient does not exist
-            1. Get new data
-            2. Save to transient
-            3. Display transient
-    2. Date doesn’t match database
-        1. Get new data
-        2. Save to transient
-        3. Display transient
+            1. GET new data that matches query from stored instance configuration
+            2. PROCESS data based on stored configuration 
+            3. SAVE to transient
+            4. DISPLAY transient
+            5. END
+    2. Date *doesn’t* match database
+        1. GET new data that matches query from stored instance configuration
+        2. STORE date of latest post in instance configuration
+        3. PROCESS data based on stored configuration 
+        3. SAVE to transient
+        4. DISPLAY transient
+        5. END
